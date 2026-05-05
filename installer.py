@@ -433,12 +433,18 @@ LANG_PACKS = ["eng", "por"]
 
 # ── Ghostscript constants ─────────────────────────────────────────────
 if sys.platform == "win32":
-    GHOSTSCRIPT_EXE = r"C:\Program Files\gs\gs10.05.0\bin\gswin64c.exe"
+    # Bumped from 10.05.0 → 10.07.0 to clear 4 medium-severity CVEs
+    # affecting gs ≤10.05.1: CVE-2025-48708 (password leak in created
+    # PDFs), CVE-2025-59798 / 59799 (stack buffer overflow in
+    # pdf_write_cmap / pdfmark_coerce_dest), CVE-2025-59800 (integer →
+    # heap overflow in ocr_begin_page). NVD confirms 10.07.0 has zero
+    # known CVEs as of 2026-05.
+    GHOSTSCRIPT_EXE = r"C:\Program Files\gs\gs10.07.0\bin\gswin64c.exe"
     GHOSTSCRIPT_URL = (
         "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/"
-        "gs10050/gs10050w64.exe"
+        "gs10070/gs10070w64.exe"
     )
-    GHOSTSCRIPT_SHA256 = "11fcfb85b14ada095946bcfc39a3a3ef96a72fee8bdfa673ed7500e9e83c3648"
+    GHOSTSCRIPT_SHA256 = "8af854e2d62f9a3a674331321b347118a83928a3726631e458194121cf3bbeec"
 elif sys.platform == "darwin":
     GHOSTSCRIPT_EXE = shutil.which("gs") or "/opt/homebrew/bin/gs"
     GHOSTSCRIPT_URL = None
