@@ -491,6 +491,10 @@ class TabConverter(BasePage):
                                     Emu(int(w * 12700)),
                                     Emu(int(h * 12700)))
                             except Exception:
+                                # Image format not supported by python-pptx
+                                # (rare formats like JBIG2). Skip the
+                                # block — the rest of the slide is still
+                                # produced.
                                 pass
                             continue
 
@@ -509,10 +513,12 @@ class TabConverter(BasePage):
                         tf.word_wrap = True
                         # Zero internal padding so the textbox bbox
                         # matches the PDF span bbox more faithfully.
+                        # Older python-pptx versions reject Emu(0) for
+                        # margins; tolerate that and leave the default.
                         for attr in ("margin_left", "margin_right",
                                      "margin_top", "margin_bottom"):
                             try: setattr(tf, attr, 0)
-                            except Exception: pass
+                            except Exception: pass  # noqa: S110
 
                         first_line = True
                         for line in lines:
@@ -535,8 +541,11 @@ class TabConverter(BasePage):
                                 first_run = False
                                 run.text = text
                                 size = span.get("size", 12)
+                                # Pt() rejects negative or non-numeric
+                                # sizes; if the PDF span had a junk
+                                # value, fall back to the theme default.
                                 try: run.font.size = Pt(size)
-                                except Exception: pass
+                                except Exception: pass  # noqa: S110
                                 flags = span.get("flags", 0)
                                 run.font.bold = bool(flags & 16)
                                 run.font.italic = bool(flags & 2)
@@ -548,6 +557,9 @@ class TabConverter(BasePage):
                                             (color >> 8) & 0xFF,
                                             color & 0xFF)
                                     except Exception:
+                                        # Some run types reject explicit
+                                        # color (e.g. inside placeholder
+                                        # layouts); leave the default.
                                         pass
                     worker.progress.emit(i, f"{i + 1}/{total}…")
                 if worker.is_cancelled():
