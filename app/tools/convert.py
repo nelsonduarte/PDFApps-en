@@ -445,9 +445,21 @@ class TabConverter(BasePage):
             from pptx import Presentation
             from pptx.util import Emu, Pt
             from pptx.dml.color import RGBColor
+            from pptx.enum.shapes import MSO_SHAPE
             doc = fitz.open(pdf_path)
             if doc.needs_pass and pwd:
                 doc.authenticate(pwd)
+
+            def _rgb(c):
+                """fitz colors are 0..1 floats; PPTX wants 0..255 ints."""
+                if c is None:
+                    return None
+                try:
+                    r, g, b = (max(0, min(255, int(v * 255))) for v in c[:3])
+                    return RGBColor(r, g, b)
+                except (TypeError, ValueError):
+                    return None
+
             try:
                 prs = Presentation()
                 prs.slide_width = Emu(int(slide_w_pt * 12700))
@@ -458,6 +470,69 @@ class TabConverter(BasePage):
                         return None
                     slide = prs.slides.add_slide(blank)
 
+                    # ── Phase 1: vector drawings (filled rects, lines).
+                    # Headers, banner bars, card backgrounds, separators
+                    # in slide-builder PDFs are vector drawings, not text
+                    # or images. Without this phase the slide looked
+                    # "naked" — only text floating on a white background.
+                    # Added FIRST so subsequent text/image shapes land on
+                    # top in PowerPoint's z-order.
+                    try:
+                        drawings = page.get_drawings()
+                    except Exception:
+                        drawings = []
+                    for d in drawings:
+                        items = d.get("items") or []
+                        rect = d.get("rect")
+                        fill = _rgb(d.get("fill"))
+                        stroke = _rgb(d.get("stroke"))
+                        if rect is None:
+                            continue
+                        x0, y0, x1, y1 = rect
+                        x0 = max(0, x0); y0 = max(0, y0)
+                        x1 = min(slide_w_pt, x1); y1 = min(slide_h_pt, y1)
+                        w = x1 - x0; h = y1 - y0
+                        if w <= 0 or h <= 0:
+                            continue
+                        # Sub-point noise (anti-aliasing or clipping
+                        # artifacts) — skip
+                        if w * h < 0.25:
+                            continue
+                        kinds = {it[0] for it in items}
+                        # Pure stroked line(s) with no fill: render the
+                        # bbox as a thin filled rectangle in the stroke
+                        # colour. Approximation that handles horizontal
+                        # / vertical separators without modelling Bezier
+                        # paths.
+                        is_filled_rect = fill is not None and (
+                            kinds == {"re"} or kinds <= {"re", "l"})
+                        is_line = fill is None and stroke is not None and (
+                            "l" in kinds and w * h <= 2 * max(w, h))
+                        if not (is_filled_rect or is_line):
+                            continue
+                        try:
+                            shape = slide.shapes.add_shape(
+                                MSO_SHAPE.RECTANGLE,
+                                Emu(int(x0 * 12700)),
+                                Emu(int(y0 * 12700)),
+                                Emu(int(w * 12700)),
+                                Emu(int(h * 12700)))
+                            shape.fill.solid()
+                            shape.fill.fore_color.rgb = fill if is_filled_rect else stroke
+                            try:
+                                # Border off — PDF drawings are usually
+                                # fill-only; the stroke (if any) is the
+                                # same colour or absent.
+                                shape.line.fill.background()
+                            except Exception:
+                                pass  # noqa: S110
+                        except Exception:
+                            # Some MSO_SHAPE / fill combinations fail
+                            # silently in older python-pptx; skip the
+                            # drawing rather than abort the whole slide.
+                            pass  # noqa: S110
+
+                    # ── Phase 2: text / image blocks.
                     # Editable extraction: image blocks become picture
                     # shapes; each *line* of a text block becomes its
                     # own textbox at the line's bbox so PowerPoint
