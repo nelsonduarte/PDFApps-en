@@ -458,38 +458,35 @@ class TabConverter(BasePage):
                         return None
                     slide = prs.slides.add_slide(blank)
 
-                    # Extract text blocks and image blocks separately so
-                    # the result is editable in PowerPoint instead of
-                    # one rasterised image per slide. Each text block
-                    # becomes a textbox at its bbox; each line in the
-                    # block becomes a paragraph; each span becomes a
-                    # run with its own size/bold/italic/color.
+                    # Editable extraction: image blocks become picture
+                    # shapes; each *line* of a text block becomes its
+                    # own textbox at the line's bbox so PowerPoint
+                    # doesn't re-flow lines (one textbox per block was
+                    # wrong — multi-line blocks lost their original
+                    # vertical positions when PowerPoint re-laid out
+                    # the text). Spans within the same line stay as
+                    # runs in a single paragraph so inline formatting
+                    # (bold/italic mid-sentence) is preserved.
                     blocks = page.get_text("dict").get("blocks", [])
                     for block in blocks:
-                        bbox = block.get("bbox")
-                        if not bbox:
-                            continue
-                        x0, y0, x1, y1 = bbox
-                        # Clamp to slide bounds; fitz can emit blocks
-                        # whose bbox slightly overflows the page rect
-                        # for italic/decorated glyphs.
-                        x0 = max(0, x0); y0 = max(0, y0)
-                        x1 = min(slide_w_pt, x1); y1 = min(slide_h_pt, y1)
-                        w = x1 - x0; h = y1 - y0
-                        if w <= 0 or h <= 0:
-                            continue
-
                         if block.get("type") == 1:  # image block
+                            bbox = block.get("bbox")
                             img_data = block.get("image")
-                            if not img_data:
+                            if not (bbox and img_data):
+                                continue
+                            ix0, iy0, ix1, iy1 = bbox
+                            ix0 = max(0, ix0); iy0 = max(0, iy0)
+                            ix1 = min(slide_w_pt, ix1); iy1 = min(slide_h_pt, iy1)
+                            iw = ix1 - ix0; ih = iy1 - iy0
+                            if iw <= 0 or ih <= 0:
                                 continue
                             try:
                                 slide.shapes.add_picture(
                                     io.BytesIO(img_data),
-                                    Emu(int(x0 * 12700)),
-                                    Emu(int(y0 * 12700)),
-                                    Emu(int(w * 12700)),
-                                    Emu(int(h * 12700)))
+                                    Emu(int(ix0 * 12700)),
+                                    Emu(int(iy0 * 12700)),
+                                    Emu(int(iw * 12700)),
+                                    Emu(int(ih * 12700)))
                             except Exception:
                                 # Image format not supported by python-pptx
                                 # (rare formats like JBIG2). Skip the
@@ -498,40 +495,49 @@ class TabConverter(BasePage):
                                 pass
                             continue
 
-                        lines = block.get("lines", [])
-                        if not lines:
-                            continue
-                        try:
-                            tb = slide.shapes.add_textbox(
-                                Emu(int(x0 * 12700)),
-                                Emu(int(y0 * 12700)),
-                                Emu(int(w * 12700)),
-                                Emu(int(h * 12700)))
-                        except Exception:
-                            continue
-                        tf = tb.text_frame
-                        tf.word_wrap = True
-                        # Zero internal padding so the textbox bbox
-                        # matches the PDF span bbox more faithfully.
-                        # Older python-pptx versions reject Emu(0) for
-                        # margins; tolerate that and leave the default.
-                        for attr in ("margin_left", "margin_right",
-                                     "margin_top", "margin_bottom"):
-                            try: setattr(tf, attr, 0)
-                            except Exception: pass  # noqa: S110
-
-                        first_line = True
-                        for line in lines:
-                            spans = line.get("spans", [])
+                        for line in block.get("lines", []):
+                            spans = [s for s in line.get("spans", [])
+                                     if s.get("text", "")]
                             if not spans:
                                 continue
-                            para = tf.paragraphs[0] if first_line else tf.add_paragraph()
-                            first_line = False
+                            lbb = line.get("bbox")
+                            if not lbb:
+                                continue
+                            lx0, ly0, lx1, ly1 = lbb
+                            # Pad horizontally so PowerPoint's slightly
+                            # different glyph metrics don't clip the
+                            # last character; vertically use the line
+                            # bbox as-is to keep baselines aligned.
+                            lx0 = max(0, lx0 - 1)
+                            ly0 = max(0, ly0)
+                            lx1 = min(slide_w_pt, lx1 + 4)
+                            ly1 = min(slide_h_pt, ly1)
+                            lw = lx1 - lx0; lh = ly1 - ly0
+                            if lw <= 0 or lh <= 0:
+                                continue
+                            try:
+                                tb = slide.shapes.add_textbox(
+                                    Emu(int(lx0 * 12700)),
+                                    Emu(int(ly0 * 12700)),
+                                    Emu(int(lw * 12700)),
+                                    Emu(int(lh * 12700)))
+                            except Exception:
+                                continue
+                            tf = tb.text_frame
+                            tf.word_wrap = False  # one line — no wrap
+                            # Zero internal padding so the textbox bbox
+                            # matches the PDF line bbox more faithfully.
+                            # Older python-pptx versions reject Emu(0)
+                            # for margins; tolerate that.
+                            for attr in ("margin_left", "margin_right",
+                                         "margin_top", "margin_bottom"):
+                                try: setattr(tf, attr, 0)
+                                except Exception: pass  # noqa: S110
+
+                            para = tf.paragraphs[0]
                             first_run = True
                             for span in spans:
-                                text = span.get("text", "")
-                                if not text:
-                                    continue
+                                text = span["text"]
                                 # Reuse the auto-created empty run for
                                 # the first span; add new runs after.
                                 if first_run and len(para.runs) > 0:
@@ -549,6 +555,17 @@ class TabConverter(BasePage):
                                 flags = span.get("flags", 0)
                                 run.font.bold = bool(flags & 16)
                                 run.font.italic = bool(flags & 2)
+                                # PDF subset fonts come prefixed with
+                                # 6 random caps + "+", strip them so
+                                # PowerPoint can substitute the
+                                # canonical face: e.g. "ABCDEF+Arial"
+                                # → "Arial".
+                                font_name = span.get("font", "") or ""
+                                if len(font_name) > 7 and font_name[6] == "+":
+                                    font_name = font_name[7:]
+                                if font_name:
+                                    try: run.font.name = font_name
+                                    except Exception: pass  # noqa: S110
                                 color = span.get("color", 0)
                                 if color:
                                     try:
