@@ -52,6 +52,9 @@ _INSTALLER_STRINGS = {
         "inst_gs_brew": "Installing Ghostscript via Homebrew…",
         "inst_gs_pkg": "Installing Ghostscript via package manager…",
         "verify_failed": "Download verification failed for {name} — file may be corrupted or tampered with.",
+        "banner_title": "Install {app} {ver}",
+        "banner_subtitle": "Choose your installation options below.",
+        "status_label": "Status:",
     },
     "pt": {
         "loading": "A carregar…",
@@ -91,6 +94,9 @@ _INSTALLER_STRINGS = {
         "inst_gs_brew": "A instalar Ghostscript via Homebrew…",
         "inst_gs_pkg": "A instalar Ghostscript via gestor de pacotes…",
         "verify_failed": "Verificação do download falhou para {name} — o ficheiro pode estar corrompido ou alterado.",
+        "banner_title": "Instalar {app} {ver}",
+        "banner_subtitle": "Escolhe as opções de instalação abaixo.",
+        "status_label": "Estado:",
     },
     "es": {
         "loading": "Cargando…",
@@ -130,6 +136,9 @@ _INSTALLER_STRINGS = {
         "inst_gs_brew": "Instalando Ghostscript via Homebrew…",
         "inst_gs_pkg": "Instalando Ghostscript via gestor de paquetes…",
         "verify_failed": "La verificación de la descarga falló para {name} — el archivo puede estar dañado o alterado.",
+        "banner_title": "Instalar {app} {ver}",
+        "banner_subtitle": "Elige las opciones de instalación a continuación.",
+        "status_label": "Estado:",
     },
     "fr": {
         "loading": "Chargement…",
@@ -169,6 +178,9 @@ _INSTALLER_STRINGS = {
         "inst_gs_brew": "Installation de Ghostscript via Homebrew…",
         "inst_gs_pkg": "Installation de Ghostscript via le gestionnaire de paquets…",
         "verify_failed": "Échec de la vérification du téléchargement pour {name} — le fichier peut être corrompu ou altéré.",
+        "banner_title": "Installer {app} {ver}",
+        "banner_subtitle": "Choisissez les options d'installation ci-dessous.",
+        "status_label": "Statut :",
     },
     "de": {
         "loading": "Laden…",
@@ -208,6 +220,9 @@ _INSTALLER_STRINGS = {
         "inst_gs_brew": "Ghostscript wird über Homebrew installiert…",
         "inst_gs_pkg": "Ghostscript wird über Paketmanager installiert…",
         "verify_failed": "Download-Überprüfung fehlgeschlagen für {name} — die Datei könnte beschädigt oder manipuliert sein.",
+        "banner_title": "{app} {ver} installieren",
+        "banner_subtitle": "Wähle die Installationsoptionen unten.",
+        "status_label": "Status:",
     },
     "zh": {
         "loading": "加载中…",
@@ -247,6 +262,9 @@ _INSTALLER_STRINGS = {
         "inst_gs_brew": "正在通过 Homebrew 安装 Ghostscript…",
         "inst_gs_pkg": "正在通过包管理器安装 Ghostscript…",
         "verify_failed": "{name} 下载校验失败 — 文件可能已损坏或被篡改。",
+        "banner_title": "安装 {app} {ver}",
+        "banner_subtitle": "请在下方选择安装选项。",
+        "status_label": "状态：",
     },
     "it": {
         "loading": "Caricamento…",
@@ -286,6 +304,9 @@ _INSTALLER_STRINGS = {
         "inst_gs_brew": "Installazione di Ghostscript via Homebrew…",
         "inst_gs_pkg": "Installazione di Ghostscript via gestore pacchetti…",
         "verify_failed": "Verifica del download fallita per {name} — il file potrebbe essere danneggiato o alterato.",
+        "banner_title": "Installa {app} {ver}",
+        "banner_subtitle": "Scegli le opzioni di installazione qui sotto.",
+        "status_label": "Stato:",
     },
     "nl": {
         "loading": "Laden…",
@@ -325,6 +346,9 @@ _INSTALLER_STRINGS = {
         "inst_gs_brew": "Ghostscript installeren via Homebrew…",
         "inst_gs_pkg": "Ghostscript installeren via pakketbeheerder…",
         "verify_failed": "Download-verificatie mislukt voor {name} — het bestand is mogelijk beschadigd of gemanipuleerd.",
+        "banner_title": "{app} {ver} installeren",
+        "banner_subtitle": "Kies hieronder de installatie-opties.",
+        "status_label": "Status:",
     },
 }
 
@@ -801,7 +825,7 @@ class InstallerApp(tk.Tk):
         self._splash = _show_loading_splash(self)
         self.withdraw()  # hide main window while building UI
         self.title(_t("title", app=APP_NAME, ver=APP_VERSION))
-        self.geometry("520x470")
+        self.geometry("600x520")
         self.resizable(False, False)
         self.configure(bg=BG)
         try:
@@ -820,22 +844,66 @@ class InstallerApp(tk.Tk):
         self.deiconify()
 
     def _build(self):
-        hdr = tk.Frame(self, bg=HEADER_BG, height=88)
-        hdr.pack(fill="x")
-        hdr.pack_propagate(False)
-        tk.Label(hdr, text=APP_NAME, bg=HEADER_BG, fg="#FFFFFF",
-                 font=("Segoe UI", 22, "bold")).place(x=24, y=16)
-        tk.Label(hdr, text=f"Version {APP_VERSION}  ·  PDF Editor",
-                 bg=HEADER_BG, fg="#94A3B8",
-                 font=("Segoe UI", 10)).place(x=26, y=55)
+        # Wizard-style layout (banner header + body + footer with status
+        # and action buttons), modelled on installers like LibreOffice's.
+        BANNER_BG = "#E5EDF5"   # soft blue-gray header band
+        BORDER    = "#C9D2DF"
 
-        body = tk.Frame(self, bg=BG, padx=24, pady=16)
-        body.pack(fill="both", expand=True)
+        # ── Banner (title + subtitle) ────────────────────────────────
+        banner = tk.Frame(self, bg=BANNER_BG, height=80)
+        banner.pack(side="top", fill="x")
+        banner.pack_propagate(False)
+        tk.Label(banner,
+                 text=_t("banner_title", app=APP_NAME, ver=APP_VERSION),
+                 bg=BANNER_BG, fg=TEXT,
+                 font=("Segoe UI", 13, "bold")).place(x=24, y=16)
+        tk.Label(banner, text=_t("banner_subtitle"),
+                 bg=BANNER_BG, fg="#475569",
+                 font=("Segoe UI", 9)).place(x=24, y=44)
+        tk.Frame(self, bg=BORDER, height=1).pack(side="top", fill="x")
 
+        # ── Footer (packed bottom-up so body fills the middle) ───────
+        # Bottom border line first (will be the bottommost element)
+        tk.Frame(self, bg=BORDER, height=1).pack(side="bottom", fill="x")
+
+        # Action buttons row (right-aligned)
+        btn_row = tk.Frame(self, bg=BG)
+        btn_row.pack(side="bottom", fill="x", padx=24, pady=(8, 14))
+        self._btn = tk.Button(btn_row, text=_t("install"),
+                              command=self._start,
+                              bg=ACCENT, fg="#FFFFFF",
+                              font=("Segoe UI", 10, "bold"),
+                              relief="flat", cursor="hand2")
+        self._btn.pack(side="right", ipady=6, ipadx=14)
+        tk.Button(btn_row, text=_t("cancel"), command=self.destroy,
+                  bg="#E2E8F0", fg=TEXT, font=("Segoe UI", 10),
+                  relief="flat", cursor="hand2").pack(
+                  side="right", padx=(0, 8), ipady=6, ipadx=14)
+
+        # Status label + current-operation text + progress bar
+        progress_area = tk.Frame(self, bg=BG)
+        progress_area.pack(side="bottom", fill="x", padx=24, pady=(10, 0))
+        tk.Label(progress_area, text=_t("status_label"), bg=BG, fg=TEXT,
+                 font=("Segoe UI", 9, "bold")).pack(anchor="w")
+        self._status_var = tk.StringVar(value=_t("ready"))
+        tk.Label(progress_area, textvariable=self._status_var, bg=BG,
+                 fg=TEXT_L, font=("Segoe UI", 9)).pack(
+                 anchor="w", pady=(2, 6))
+        self._pb = ttk.Progressbar(progress_area, mode="determinate")
+        self._pb.pack(fill="x")
+
+        # Top border above the footer block
+        tk.Frame(self, bg=BORDER, height=1).pack(side="bottom", fill="x")
+
+        # ── Body (form fields, fills the middle) ─────────────────────
+        body = tk.Frame(self, bg=BG, padx=24, pady=18)
+        body.pack(side="top", fill="both", expand=True)
+
+        # Folder picker
         tk.Label(body, text=_t("folder"), bg=BG, fg=TEXT,
                  font=("Segoe UI", 10, "bold")).pack(anchor="w")
         row = tk.Frame(body, bg=BG)
-        row.pack(fill="x", pady=(4, 12))
+        row.pack(fill="x", pady=(4, 14))
         self._dir_var = tk.StringVar(value=default_dir())
         self._dir_entry = tk.Entry(row, textvariable=self._dir_var,
                                    font=("Segoe UI", 10), bg="#F8FAFC",
@@ -902,26 +970,7 @@ class InstallerApp(tk.Tk):
             notes.append(_t("gs_ok"))
         self._note_var = tk.StringVar(value="  ".join(notes))
         tk.Label(body, textvariable=self._note_var, bg=BG, fg="#10B981",
-                 font=("Segoe UI", 9)).pack(anchor="w", pady=(2, 8))
-
-        self._status_var = tk.StringVar(value=_t("ready"))
-        tk.Label(body, textvariable=self._status_var, bg=BG, fg=TEXT_L,
-                 font=("Segoe UI", 9)).pack(anchor="w")
-        self._pb = ttk.Progressbar(body, mode="determinate", length=472)
-        self._pb.pack(fill="x", pady=(4, 16))
-
-        btn_row = tk.Frame(body, bg=BG)
-        btn_row.pack(fill="x")
-        self._btn = tk.Button(btn_row, text=_t("install"),
-                              command=self._start,
-                              bg=ACCENT, fg="#FFFFFF",
-                              font=("Segoe UI", 11, "bold"),
-                              relief="flat", cursor="hand2")
-        self._btn.pack(side="right", ipady=8, ipadx=8)
-        tk.Button(btn_row, text=_t("cancel"), command=self.destroy,
-                  bg="#E2E8F0", fg=TEXT, font=("Segoe UI", 10),
-                  relief="flat", cursor="hand2").pack(
-                  side="right", padx=(0, 8), ipady=8, ipadx=4)
+                 font=("Segoe UI", 9)).pack(anchor="w", pady=(6, 0))
 
     def _browse(self):
         d = filedialog.askdirectory(initialdir=self._dir_var.get())
