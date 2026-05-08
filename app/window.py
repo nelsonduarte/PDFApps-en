@@ -937,7 +937,7 @@ class MainWindow(QMainWindow):
         Frozen PyInstaller builds relaunch the exe directly; source runs
         relaunch the original .py via the current Python interpreter."""
         import sys
-        from PySide6.QtCore import QProcess
+        from PySide6.QtCore import QProcess, QProcessEnvironment
         pdf_args = [a for a in sys.argv[1:] if a.lower().endswith(".pdf")]
         if getattr(sys, "frozen", False):
             program = sys.executable
@@ -948,7 +948,17 @@ class MainWindow(QMainWindow):
             program = sys.executable
             args = [script] + pdf_args
             cwd = os.path.dirname(script) or os.getcwd()
-        QProcess.startDetached(program, args, cwd)
+        # PyInstaller --onefile sets _MEIPASS2 to its temp extraction
+        # folder. The parent deletes that folder on exit, so the child
+        # must perform its own extraction instead of reusing ours.
+        proc = QProcess()
+        proc.setProgram(program)
+        proc.setArguments(args)
+        proc.setWorkingDirectory(cwd)
+        env = QProcessEnvironment.systemEnvironment()
+        env.remove("_MEIPASS2")
+        proc.setProcessEnvironment(env)
+        proc.startDetached()
         QApplication.instance().exit(0)
 
     # ── Drag & drop PDF on window ──────────────────────────────────────────
