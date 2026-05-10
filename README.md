@@ -6,7 +6,15 @@
   <img src="icon_512.png" alt="PDFApps Icon" width="128">
 </p>
 
-[![PDFApps](https://img.shields.io/badge/PDFApps-PDF%20Editor-14B8A6?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAADnklEQVR4nI2VW2gcZRTH/2dmdnaym81mt9lbthdI00oi1nrBllIsUoS2YtFC4osF9UHwyYdWgj60PojPgiAtgmCfNHkoUR+qVGlRaQqKRCxqYwO1WWt23dvM3ubyfUdmSKSTmNDzMnzfd+b3/c//nGGAe4OZcB/BzMpGZ1poRcS5Cy/Glw2bxpFBBUAFFRzKjOPqjSsAshjPZkBELWYmAgEEXg+cnlAxOSN2fvzyKTIip5OOwS23pfaTirQ6iIXFBYwN7oYjPJmMxOhWtXSeiM4yswqGJCL+X4XMfCSmG/m39p5AT7qwhQuPJf40y3g8twsf3riEv+pljKSHz7AQcSI6jbNQmBmr0DVeUDsqVH5goOiVrTqntTg32iY/v2M/a4K41Kww2Z5sdzseFOUUM3/Ab7MPIiJar7BhtxShE73z4yf02eIcnRw7jAG9D1PXPoJkiVKnClg2vXTxXeWJkYfcRDr52vzSTevc4denpnlanaRJEQAnMIEZzODVsWPQY1E0mw1MPTyBpt2Baws8lt7lS8Ch/B4oqgKz08IfjbtKVFoyQpFHfMbMTNg71X/alvM5M3PPdDynLZgdZq8t2bZcFl1ms9blO4vL3Ci3WHTY83NFS8zeywiVXLct9OtJWG4bs7NXMbKjiNLdCk48+xRMs4nvrs2jWq3jdmkZJ184it07t6PWbYb6EFqoFAm2UokEtuazeP/cNPY9+iAiqopOu4eoHkGxkEUxl4FwZbCvUrivoZVvfFQj3F76GwuLSygUMvj++s+wWh1omgrPE9D1CHRdhyeEP9brIoz3B58Ax3GRz27BmTdeCQA+yIjqSCbiSPQZGB3ZimIhA8cDlJVxWQ1tLd31GNuKWcRiBr6dm8expw9AVQg928VAIo5Op4tiYQiGoUMGI7iZwpXwE7/65nrg25dfz6E/HkOjaeGfWgPVuokLn17yuxpUszZCCiWAiEZYqjVx8YsrQdm24+K5Z56EYURRrjRwp7SM7cVccFky0b85EGBJBO72bP7hp994WzGHnu1ASoYQAoIlYn0Gfvn1FobzQ3z86EGWzHJDIBHFFYCyW1La+ffehGW1UcgNBc6kU4M4uH8viBmuJ9C0WlrgF1F8QyADl21P7NE0hY8fOaAomgLPFcHY+J/ecD69ejFUykvbE6SoyuWQqLUeVLiSMOum8vvNStBCHzG6bzQ4q1VrQG0lMQ2kOMWZTMZaZ+R/Cu/zF7DZO/8CJ1+31VpYUNkAAAAASUVORK5CYII=)](https://nelsonduarte.github.io/PDFApps/)
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="screenshots/viewer.png">
+    <source media="(prefers-color-scheme: light)" srcset="screenshots/viewer-light.png">
+    <img src="screenshots/viewer.png" alt="PDFApps main viewer" width="900">
+  </picture>
+</p>
+
+[![Microsoft Store](https://img.shields.io/badge/Microsoft%20Store-Install-0078D4?logo=microsoftstore&logoColor=white)](https://apps.microsoft.com/detail/9P70QGR8BSMZ)
 
 [![Release](https://img.shields.io/github/v/release/nelsonduarte/PDFApps?color=10b981&logo=github)](https://github.com/nelsonduarte/PDFApps/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/nelsonduarte/PDFApps/total?color=2563eb&logo=github)](https://github.com/nelsonduarte/PDFApps/releases)
@@ -17,7 +25,6 @@
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](#)
 [![License](https://img.shields.io/badge/license-MIT-orange)](LICENSE)
 [![GitHub Sponsors](https://img.shields.io/badge/sponsor-♥-ea4aaa?logo=github)](https://github.com/sponsors/nelsonduarte)
-[![Hypercommit](https://img.shields.io/badge/Hypercommit-DB2475)](https://hypercommit.com/PDFapps)
 
 ---
 
@@ -30,7 +37,7 @@ Most PDF tools are either paid, browser-based, or require uploading your files t
 - **All-in-one** — 15 tools: split, merge, compress, encrypt, OCR, convert, edit, page numbers, N-up and more
 - **Cross-platform** — works on Windows, macOS and Linux
 - **Fast** — lazy rendering opens large PDFs instantly
-- **Multi-language** — auto-detects your system language (EN, PT, ES, FR, DE, ZH, IT, NL)
+- **Multi-language** — 8 interface languages (EN, PT, ES, FR, DE, ZH, IT, NL)
 
 ---
 
@@ -46,12 +53,12 @@ Most PDF tools are either paid, browser-based, or require uploading your files t
 | **Compress** | Reduce file size with three compression levels (extreme / recommended / low) |
 | **Encrypt** | Protect the PDF with a password or remove existing protection |
 | **Watermark** | Overlay a watermark/stamp PDF on pages with opacity and position control |
-| **OCR** | Recognise text in scanned PDFs — supports PT, EN, ES, FR and DE |
-| **Convert** | Convert PDF to images (PNG/JPG with DPI control), Word (DOCX) or plain text (TXT) |
+| **OCR** | Recognise text in scanned PDFs — 5 language packs bundled (PT, EN, ES, FR, DE), works with any of Tesseract's 100+ languages if installed separately |
+| **Convert** | Export PDF to DOCX, PPTX, XLSX, HTML, EPUB, TXT, PNG or JPG (with DPI control) |
 | **Page numbers** | Add page numbering (header/footer) with format, position and font control |
 | **N-Up** | Arrange multiple pages per sheet (2, 4, 6, 9, 16-up) with custom layout |
 | **Edit** | Inline visual editor: redact, insert text, image, signature, highlight, notes, forms and edit existing text |
-| **Import** | Convert text files (.txt), images (PNG/JPG/BMP) or Markdown (.md) to PDF — batch support |
+| **Import** | Convert DOCX, PPTX, XLSX, HTML, EPUB, TXT, Markdown or images (PNG/JPG/BMP) to PDF — batch support |
 | **Info** | Show metadata, page count, size and document properties |
 
 ### Integrated viewer
@@ -102,12 +109,13 @@ Most PDF tools are either paid, browser-based, or require uploading your files t
 
 | Platform | How to get it |
 |---|---|
-| **Windows** 10/11 64-bit | Download `PDFAppsSetup.exe` from [Releases](https://github.com/nelsonduarte/PDFApps/releases/latest), or `winget install nelsonduarte.PDFApps` (after winget review) |
+| **Windows** 10/11 (Store) | [Get it on the Microsoft Store](https://apps.microsoft.com/detail/9P70QGR8BSMZ) — auto-updates handled by Windows |
+| **Windows** 10/11 (direct) | `winget install nelsonduarte.PDFApps`, or download `PDFAppsSetup.exe` from [Releases](https://github.com/nelsonduarte/PDFApps/releases/latest) |
+| **macOS** 10.14+ | Download `PDFApps-macOS.dmg` from [Releases](https://github.com/nelsonduarte/PDFApps/releases/latest), mount, and drag PDFApps.app to Applications — Tesseract via `brew install tesseract tesseract-lang` |
 | **Ubuntu / Debian / Snap** | `sudo snap install pdfapps` |
 | **Fedora** | `sudo dnf copr enable nelsonduarte2809/pdfapps && sudo dnf install pdfapps` |
 | **Arch / Manjaro** | `yay -S pdfapps` (source) or `yay -S pdfapps-bin` (binary) |
-| **Any Linux** | Download `PDFApps-1.8.3-x86_64.AppImage` from [Releases](https://github.com/nelsonduarte/PDFApps/releases/latest), `chmod +x` and run |
-| **macOS** 10.14+ | Download `PDFApps-macOS.dmg` from [Releases](https://github.com/nelsonduarte/PDFApps/releases/latest), mount, and drag PDFApps.app to Applications — Tesseract via `brew install tesseract tesseract-lang` |
+| **Any Linux** | Download the latest `PDFApps-*-x86_64.AppImage` from [Releases](https://github.com/nelsonduarte/PDFApps/releases/latest), `chmod +x` and run |
 
 ### Run from source
 
@@ -155,9 +163,9 @@ python -m PyInstaller --clean installer.spec
 
 | File | Description |
 |---|---|
-| `dist/PDFApps.exe` | Main application (~82 MB) |
-| `dist/PDFAppsUninstall.exe` | Standalone uninstaller (~11 MB) |
-| `dist/PDFAppsSetup.exe` | **Installer for distribution** (~104 MB) |
+| `dist/PDFApps.exe` | Main application (~93 MB) |
+| `dist/PDFAppsUninstall.exe` | Standalone uninstaller (~13 MB) |
+| `dist/PDFAppsSetup.exe` | **Installer for distribution** (~113 MB) |
 
 > PyInstaller does not cross-compile — the binary must be built on the target platform.
 
@@ -192,10 +200,22 @@ PDFApps/
 ├── icon_512.png            # Source icon (512x512 PNG)
 ├── pdfapps.svg             # Logo SVG (used in sidebar/viewer)
 ├── requirements.txt        # Python dependencies
-├── docs/                   # GitHub Pages website
-│   ├── index.html          # Single-page site with JS-based i18n
+├── docs/                   # Static site published at pdf-apps.com (Cloudflare Pages)
+│   ├── index.html          # Landing page
+│   ├── features.html       # Feature gallery
+│   ├── download.html       # Per-platform install options
+│   ├── docs.html           # User guide
+│   ├── changelog.html      # Release notes
+│   ├── privacy.html        # Privacy policy
+│   ├── styles.css          # Shared theme (dark + light)
 │   ├── icon.png            # App icon for website
 │   └── favicon.ico         # Browser favicon
+├── msix/                   # Microsoft Store packaging (manifest, assets, build.ps1)
+├── flatpak/                # Flatpak / AppStream metainfo + .desktop file
+├── snap/                   # Snap Store package definition
+├── aur/                    # AUR PKGBUILDs (pdfapps source build + pdfapps-bin binary)
+├── rpm/                    # Fedora Copr .spec file
+├── winget/                 # Microsoft winget manifest
 ├── app/                    # Modular source code
 │   ├── constants.py        # Colours and design constants
 │   ├── styles.py           # Qt stylesheet (dark/light theme)
@@ -261,31 +281,14 @@ Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for the full d
 
 ## Support the project
 
-PDFApps is free, open source and built by a solo developer. If you or your company find it useful, sponsoring helps keep it maintained and growing.
-
-**Why sponsor?**
-- Ensure long-term maintenance and new features
-- Get your logo in the README and website (Gold tier)
-- Support privacy-first, offline software
+PDFApps is free, open source, and built by a solo developer. If you or your company find it useful, [sponsoring on GitHub](https://github.com/sponsors/nelsonduarte) or [funding on Polar](https://polar.sh/nelsonduarte) helps keep it maintained.
 
 <a href="https://github.com/sponsors/nelsonduarte">
   <img src="https://img.shields.io/badge/Sponsor_on_GitHub-♥-ea4aaa?style=for-the-badge&logo=github" alt="Sponsor on GitHub">
 </a>
 <a href="https://polar.sh/nelsonduarte">
-  <img src="https://img.shields.io/badge/Fund_on_Polar-0062FF?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyeiIvPjwvc3ZnPg==" alt="Fund on Polar">
+  <img src="https://img.shields.io/badge/Fund_on_Polar-0062FF?style=for-the-badge" alt="Fund on Polar">
 </a>
-
-### Sponsors
-
-#### Gold sponsors
-
-<!-- Your logo here — become a Gold sponsor: https://github.com/sponsors/nelsonduarte -->
-
-_Your company here — [become a Gold sponsor](https://github.com/sponsors/nelsonduarte)_
-
-#### Backers
-
-_Be the first backer — [sponsor on GitHub](https://github.com/sponsors/nelsonduarte) or [fund on Polar](https://polar.sh/nelsonduarte)_
 
 ---
 
