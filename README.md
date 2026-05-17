@@ -1,6 +1,6 @@
 # PDFApps
 
-> PDF editor and manager for Windows, macOS and Linux — fast, offline and subscription-free.
+> PDF editor and manager for Windows, macOS and Linux, fast, offline and subscription-free.
 
 <p align="center">
   <img src="icon_512.png" alt="PDFApps Icon" width="128">
